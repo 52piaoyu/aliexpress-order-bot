@@ -33,7 +33,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = db.AddIndex(dbSQL, index)
+	go db.AddIndex(dbSQL, index, errChan)
 	if err != nil {
 		panic(err)
 	}
