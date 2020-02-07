@@ -6,9 +6,17 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
+
 	"./bot"
 	"./db"
 )
+
+func init() {
+	if err := godotenv.Load(); err != nil {
+		panic("No .env file found")
+	}
+}
 
 func main() {
 	botToken := os.Getenv("TOKEN")
@@ -19,16 +27,17 @@ func main() {
 	// if err != nil {
 	// 	panic(err)
 	// }
-	var index = db.Index{101, "Hellwwwwo", "Moto", "Hell", time.Now()}
-	dbSql, err := sql.Open("sqlite3", "./db.sqlite3")
+	index := db.Index{101, "Hellwwwwo", "Moto", "Hell", time.Now()}
+	dbSQL, err := sql.Open("sqlite3", "./db.sqlite3")
+	defer dbSQL.Close()
 	if err != nil {
 		panic(err)
 	}
-	err = db.AddIndex(dbSql, index)
+	err = db.AddIndex(dbSQL, index)
 	if err != nil {
 		panic(err)
 	}
-	logger(errChan)
+	go logger(errChan)
 }
 
 func logger(errChan <-chan error) {
